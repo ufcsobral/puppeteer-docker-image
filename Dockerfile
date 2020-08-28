@@ -27,6 +27,7 @@ ENV LIB_PACKAGES \
 
 RUN mkdir ${WORKDRIR}
 COPY index.js ${WORKDRIR}
+COPY package.json ${WORKDRIR}
 COPY package-lock.json ${WORKDRIR}
 WORKDIR ${WORKDRIR}
 
@@ -40,6 +41,6 @@ RUN set -eux \
 	&& apt-get autoremove -y \
     # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
     && rm -rf /var/lib/apt/lists/* \
-    && npm install
+    && npm ci
 
 CMD node index.js

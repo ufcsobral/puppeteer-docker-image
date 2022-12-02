@@ -19,8 +19,8 @@ app.post('/pdf', async (req, res) => {
     // console.log(req.body)
     // res.send(req.body)
 
-    const exec = require('child_process').exec
-    exec('mkfontscale && mkfontdir && fc-cache')
+    /* const exec = require('child_process').exec
+    exec('mkfontscale && mkfontdir && fc-cache') */
 
     const margin = req.body.margin ?? {
         top: 0,
@@ -33,7 +33,17 @@ app.post('/pdf', async (req, res) => {
     const pdf = `${__dirname}/${filename}.pdf`
 
     const browser = await puppeteer.launch({
-        args: ['--no-sandbox'],
+        headless: true,
+        ignoreHTTPSErrors: true,
+        devtools: false,
+        args: [
+            '--no-sandbox',
+            // '--disable-web-security',
+            // '--disable-features=IsolateOrigins',
+            // '--disable-site-isolation-trials',
+            /* https://docs.browserless.io/blog/2020/09/30/puppeteer-print.html#use-a-special-launch-flag */
+            // '--font-render-hinting=none'
+        ],
     })
     const page = await browser.newPage()
 
@@ -42,7 +52,21 @@ app.post('/pdf', async (req, res) => {
             console.log(`${i}: ${msg.args()[i]}`)
     })
 
-    await page.setContent(req.body.payload)
+    /* https://pptr.dev/api/puppeteer.page.setcontent#remarks
+     * `waitUntil`: When to consider setting markup succeeded,
+     * defaults to load. Given an array of event strings, setting
+     * content is considered to be successful after all events have
+     * been fired. Events can be either:
+     * 
+     * - `load`: consider setting content to be finished when the load event is fired.
+     * - `domcontentloaded`: consider setting content to be finished when the
+     *    DOMContentLoaded event is fired.
+     * - `networkidle0`: consider setting content to be finished when there are
+     *    no more than 0 network connections for at least 500 ms.
+     * - `networkidle2`: consider setting content to be finished when there are
+     *    no more than 2 network connections for at least 500 ms.
+     */
+    await page.setContent(req.body.payload, {waitUntil: 'networkidle0'})
     await page.emulateMediaType('screen')
     await page.pdf({
         path: pdf,

@@ -1,14 +1,13 @@
 {
   "name": "eventos-puppeteer",
-  "version": "1.0.0",
+  "version": "2",
   "description": "Cria uma API para converter HTML em PDF e JPEG",
   "main": "index.js",
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "express": "^4.17.1",
-    "puppeteer": "^5.2.1"
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2",
+    "puppeteer": "^19.3.0"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
